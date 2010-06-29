@@ -36,12 +36,14 @@ public class P001MavenTest
         MavenLauncher launcher = getMavenLauncher();
 
         // set up
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
         launcher.setProject( getProject( "p001/libs" ) );
         launcher.setGoals( "clean", "install" );
         launcher.execute();
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         launcher.setProject( getProject( "p001/core" ) );
         launcher.setGoals( "clean", "install" );
         launcher.execute();
@@ -71,6 +73,7 @@ public class P001MavenTest
         MavenLauncher launcher = getMavenLauncher();
 
         // set up
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
         launcher.setProject( getProject( "p001/libs" ) );
         launcher.setGoals( "clean", "install" );
@@ -80,6 +83,7 @@ public class P001MavenTest
         launcher.execute();
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         launcher.setProject( getProject( "p001/plugins" ) );
         launcher.setGoals( "clean", "install" );
         launcher.execute();
@@ -109,6 +113,7 @@ public class P001MavenTest
         MavenLauncher launcher = getMavenLauncher();
 
         // set up
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
         launcher.setProject( getProject( "p001/import/corporate-pom" ) );
         launcher.setGoals( "clean", "install" );
@@ -118,6 +123,7 @@ public class P001MavenTest
         launcher.execute();
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         launcher.setProject( getProject( "p001/import" ) );
         launcher.setGoals( "validate" );
         launcher.execute();

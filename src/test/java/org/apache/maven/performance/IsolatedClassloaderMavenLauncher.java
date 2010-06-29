@@ -163,6 +163,7 @@ public class IsolatedClassloaderMavenLauncher
 
         args.add( "-q" );
         args.add( "-B" );
+        args.add( "-e" );
 
         for ( String goal : goals )
         {
