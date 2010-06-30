@@ -144,6 +144,7 @@ public class P001EmbedderTest
     public void testCalculateExecutionPlan()
         throws Exception
     {
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
         install( "p001/libs" );
         install( "p001/core" );
@@ -151,10 +152,13 @@ public class P001EmbedderTest
         File basedir = getProject( "p001/plugins" );
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         doCalculateExecutionPlan( basedir, false );
 
         for ( int i = 0; i < EXECUTION_COUNT; i++ )
         {
+            System.out.println( getName() + "#" + i );
+
             startMeasuring();
 
             doCalculateExecutionPlan( basedir, true );
@@ -169,6 +173,7 @@ public class P001EmbedderTest
     public void testCalculateExecutionPlanNoPoms()
         throws Exception
     {
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
         install( "p001/libs" );
         install( "p001/core" );
@@ -176,6 +181,7 @@ public class P001EmbedderTest
         File basedir = getProject( "p001/plugins" );
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         doCalculateExecutionPlan( basedir, false );
 
         DirectoryScanner ds = new DirectoryScanner();
@@ -190,6 +196,8 @@ public class P001EmbedderTest
 
         for ( int i = 0; i < EXECUTION_COUNT; i++ )
         {
+            System.out.println( getName() + "#" + i );
+
             startMeasuring();
 
             doCalculateExecutionPlan( basedir, true );
@@ -343,11 +351,14 @@ public class P001EmbedderTest
     public void testResolveMissingArtifact()
         throws Exception
     {
+        System.out.println( getName() + "#setup" );
         purgeLocalRepository();
 
         // warm up
+        System.out.println( getName() + "#warmup" );
         doTestResolveMissingArtifact( false );
 
+        System.out.println( getName() + "#runs" );
         for ( int i = 0; i < 100; i++ )
         {
             startMeasuring();
