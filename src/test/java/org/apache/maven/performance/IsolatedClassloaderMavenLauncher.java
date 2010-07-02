@@ -147,8 +147,6 @@ public class IsolatedClassloaderMavenLauncher
 
     private File getMavenHome()
     {
-        // return new File( "/tmp/apache-maven-3.0-SNAPSHOT" );
-        // return new File( "/opt/maven" );
         return new File( System.getProperty( "test.maven.home" ) );
     }
 

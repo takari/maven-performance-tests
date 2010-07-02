@@ -293,6 +293,7 @@ public class P001EmbedderTest
         MavenExecutionRequest request = new DefaultMavenExecutionRequest();
         request.setUserSettingsFile( settingsRequest.getUserSettingsFile() );
         request.setGlobalSettingsFile( settingsRequest.getGlobalSettingsFile() );
+        request.setSystemProperties( System.getProperties() );
         populator.populateFromSettings( request, settingsBuilder.build( settingsRequest ).getEffectiveSettings() );
         return request;
     }
