@@ -23,8 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.DefaultMaven;
 import org.apache.maven.Maven;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -268,6 +270,7 @@ public class P001EmbedderTest
         for ( String modulePath : model.getModules() )
         {
             ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
+            configuration.setRepositorySession( ( (DefaultMaven) maven ).newRepositorySession( request ) );
             configuration.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
             MavenProject project = projectBuilder.build( new File( basedir, modulePath + "/pom.xml" ), configuration ).getProject();
             projects.add( project );
@@ -307,9 +310,10 @@ public class P001EmbedderTest
         {
             ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
             configuration.setResolveDependencies( true );
+            configuration.setRepositorySession( ( (DefaultMaven) maven ).newRepositorySession( request ) );
             projectBuildingResult = projectBuilder.build( pomFile, configuration );
             result.setProject( projectBuildingResult.getProject() );
-            result.setArtifactResolutionResult( projectBuildingResult.getArtifactResolutionResult() );
+            //result.setArtifactResolutionResult( projectBuildingResult.getArtifactResolutionResult() );
         }
         catch ( ProjectBuildingException ex )
         {
@@ -330,7 +334,10 @@ public class P001EmbedderTest
         throws Exception
     {
         MavenExecutionResult result = new DefaultMavenExecutionResult();
-        return new MavenSession( container, request, result, project );
+        MavenSession session =
+            new MavenSession( container, ( (DefaultMaven) maven ).newRepositorySession( request ), request, result );
+        session.setProjects( Collections.singletonList( project ) );
+        return session;
     }
 
     protected void install( String path )
