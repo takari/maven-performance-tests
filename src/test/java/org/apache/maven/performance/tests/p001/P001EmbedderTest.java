@@ -46,6 +46,7 @@ import org.apache.maven.performance.AbstractMavenPerformanceTestCase;
 import org.apache.maven.performance.FilexWagon;
 import org.apache.maven.performance.NullLoggerManager;
 import org.apache.maven.plugin.ExtensionRealmCache;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.PluginDescriptorCache;
 import org.apache.maven.plugin.PluginRealmCache;
 import org.apache.maven.project.MavenProject;
@@ -333,10 +334,17 @@ public class P001EmbedderTest
     public MavenSession newSession( MavenExecutionRequest request, MavenProject project )
         throws Exception
     {
+        MavenSession session = newSession( request );
+        session.setProjects( Collections.singletonList( project ) );
+        return session;
+    }
+
+    public MavenSession newSession( MavenExecutionRequest request )
+        throws Exception
+    {
         MavenExecutionResult result = new DefaultMavenExecutionResult();
         MavenSession session =
             new MavenSession( container, ( (DefaultMaven) maven ).newRepositorySession( request ), request, result );
-        session.setProjects( Collections.singletonList( project ) );
         return session;
     }
 
@@ -361,6 +369,12 @@ public class P001EmbedderTest
     {
         System.out.println( getName() + "#setup" );
         purgeLocalRepository();
+
+        MavenExecutionRequest request = createExecutionRequest();
+        populator.populateDefaults( request );
+
+        LegacySupport legacySupport = container.lookup( LegacySupport.class );
+        legacySupport.setSession( newSession( request ) );
 
         // warm up
         System.out.println( getName() + "#warmup" );
