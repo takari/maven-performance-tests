@@ -372,6 +372,7 @@ public class P001EmbedderTest
 
         MavenExecutionRequest request = createExecutionRequest();
         populator.populateDefaults( request );
+        request.setCacheNotFound( true ).setCacheTransferError( true );
 
         LegacySupport legacySupport = container.lookup( LegacySupport.class );
         legacySupport.setSession( newSession( request ) );
