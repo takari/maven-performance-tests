@@ -31,10 +31,10 @@ import org.apache.maven.Maven;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.cli.MavenCli;
-import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.DefaultMavenExecutionResult;
 import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
@@ -266,14 +266,15 @@ public class P001EmbedderTest
         Model model = modelReader.read( new File( basedir, "pom.xml" ), null );
 
         MavenExecutionRequest request = createExecutionRequest();
-        populator.populateDefaults(request);
+        populator.populateDefaults( request );
 
         for ( String modulePath : model.getModules() )
         {
             ProjectBuildingRequest configuration = request.getProjectBuildingRequest();
             configuration.setRepositorySession( ( (DefaultMaven) maven ).newRepositorySession( request ) );
-            configuration.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
-            MavenProject project = projectBuilder.build( new File( basedir, modulePath + "/pom.xml" ), configuration ).getProject();
+            configuration.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL );
+            MavenProject project =
+                projectBuilder.build( new File( basedir, modulePath + "/pom.xml" ), configuration ).getProject();
             projects.add( project );
         }
 
@@ -314,7 +315,7 @@ public class P001EmbedderTest
             configuration.setRepositorySession( ( (DefaultMaven) maven ).newRepositorySession( request ) );
             projectBuildingResult = projectBuilder.build( pomFile, configuration );
             result.setProject( projectBuildingResult.getProject() );
-            //result.setArtifactResolutionResult( projectBuildingResult.getArtifactResolutionResult() );
+            // result.setArtifactResolutionResult( projectBuildingResult.getArtifactResolutionResult() );
         }
         catch ( ProjectBuildingException ex )
         {
@@ -400,6 +401,77 @@ public class P001EmbedderTest
         assertPerformance( new RelativeBandChecker( InternalDimensions.SYSTEM_TIME, 0.5f, 10.0f ) );
     }
 
+    public void testUnresolvableExtensionPlugin()
+        throws Exception
+    {
+        System.out.println( getName() + "#setup" );
+        purgeLocalRepository();
+
+        MavenExecutionRequest request = createExecutionRequest();
+        populator.populateDefaults( request );
+        request.setCacheNotFound( true ).setCacheTransferError( true );
+
+        LegacySupport legacySupport = container.lookup( LegacySupport.class );
+        legacySupport.setSession( newSession( request ) );
+
+        // warm up
+        System.out.println( getName() + "#warmup" );
+        doTestUnresolvableExtensionPlugin( false );
+
+        System.out.println( getName() + "#runs" );
+        for ( int i = 0; i < 100; i++ )
+        {
+            startMeasuring();
+
+            doTestUnresolvableExtensionPlugin( true );
+
+            stopMeasuring();
+        }
+
+        commitMeasurements();
+        /*
+         * Upon success, this test has an average execution time of about 4ms. Upon failure, the remote access delay
+         * increases this by at least 100ms so we can afford the more lax band checking here, thereby stabilizing the
+         * test.
+         */
+        assertPerformance( new RelativeBandChecker( InternalDimensions.SYSTEM_TIME, 0.5f, 10.0f ) );
+    }
+
+    private void doTestUnresolvableExtensionPlugin( boolean delay )
+        throws Exception
+    {
+        flushCaches();
+
+        if ( delay )
+        {
+            FilexWagon.delay = REMOTE_ACCESS_DELAY;
+        }
+
+        try
+        {
+            MavenExecutionRequest executionRequest = createExecutionRequest();
+            populator.populateDefaults( executionRequest );
+
+            ProjectBuildingRequest configuration = executionRequest.getProjectBuildingRequest();
+            configuration.setRepositorySession( ( (DefaultMaven) maven ).newRepositorySession( executionRequest ) );
+            configuration.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL );
+
+            try
+            {
+                projectBuilder.build( new File( "projects/unresolvable-extension-plugin.xml" ), configuration );
+                fail();
+            }
+            catch ( ProjectBuildingException expected )
+            {
+                // apparently expected
+            }
+        }
+        finally
+        {
+            FilexWagon.delay = 0;
+        }
+    }
+
     private void doTestResolveMissingArtifact( boolean delay )
         throws Exception
     {
@@ -410,15 +482,14 @@ public class P001EmbedderTest
             FilexWagon.delay = REMOTE_ACCESS_DELAY;
         }
 
-        try 
+        try
         {
             MavenExecutionRequest executionRequest = createExecutionRequest();
             populator.populateDefaults( executionRequest );
-            Artifact artifact = repositorySystem.createArtifactWithClassifier( "missing", "missing", "1.0", "jar", "sources" );
-            ArtifactResolutionRequest request = new ArtifactResolutionRequest()
-                .setArtifact( artifact )
-                .setLocalRepository( executionRequest.getLocalRepository() )
-                .setRemoteRepositories( executionRequest.getRemoteRepositories() );
+            Artifact artifact =
+                repositorySystem.createArtifactWithClassifier( "missing", "missing", "1.0", "jar", "sources" );
+            ArtifactResolutionRequest request =
+                new ArtifactResolutionRequest().setArtifact( artifact ).setLocalRepository( executionRequest.getLocalRepository() ).setRemoteRepositories( executionRequest.getRemoteRepositories() );
             repositorySystem.resolve( request );
         }
         finally
@@ -427,5 +498,4 @@ public class P001EmbedderTest
         }
     }
 
-    
 }

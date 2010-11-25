@@ -1,0 +1,16 @@
+<project>
+  <groupId>group-id</groupId>
+  <artifactId>artifact-id</artifactId>
+  <version>1</version>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>unresolvable</groupId>
+        <artifactId>unresolvable</artifactId>
+        <version>1</version>
+        <extensions>true</extensions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
