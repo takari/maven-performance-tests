@@ -28,6 +28,7 @@ under the License.
 
   <properties>
     <perf.dbloc>//localhost:1527;dbname=perfDB</perf.dbloc>
+    <surefire.memory>-Xmx128m -XX:MaxPermSize=128m</surefire.memory>
   </properties>
 
   <dependencies>
@@ -273,7 +274,7 @@ under the License.
               <value>target/dependency/apache-maven-${maven-version}</value>
             </property>
           </systemProperties>
-          <argLine>"-Djava.library.path=${basedir}/src/test/lib${path.separator}${java.library.path}"</argLine>
+          <argLine>${surefire.memory} "-Djava.library.path=${basedir}/src/test/lib${path.separator}${java.library.path}"</argLine>
         </configuration>
       </plugin>
 
