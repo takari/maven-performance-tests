@@ -50,7 +50,27 @@ under the License.
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
-      <version>1.8</version>
+      <version>1.9</version>
+      <exclusions>
+        <!-- excluded in favor of sisu -->
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+        <!-- excluded in favor of versions used by maven-embedder -->
+        <exclusion>
+          <groupId>org.sonatype.aether</groupId>
+          <artifactId>aether-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.aether</groupId>
+          <artifactId>aether-spi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.aether</groupId>
+          <artifactId>aether-util</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
