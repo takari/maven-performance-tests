@@ -29,6 +29,7 @@ under the License.
   <properties>
     <perf.dbloc>//localhost:1527;dbname=perfDB</perf.dbloc>
     <surefire.memory>-Xmx128m -XX:MaxPermSize=128m</surefire.memory>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
