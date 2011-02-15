@@ -192,6 +192,7 @@ under the License.
 
       <properties>
         <scmConnection>scm:git:git://github.com/apache/maven-3.git</scmConnection>
+        <perf.config>build=${maven-version}-r${buildNumber}-${timestamp}</perf.config>
       </properties>
 
       <build>
