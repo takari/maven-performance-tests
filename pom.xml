@@ -103,11 +103,9 @@ under the License.
 
       <properties>
         <maven-version>2.0.10</maven-version>
-
         <perf.config>build=${maven-version}</perf.config>
         <perf.assertAgainst></perf.assertAgainst>
       </properties>
-
 
       <build>
         <plugins>
@@ -148,7 +146,7 @@ under the License.
 
       <properties>
         <maven-version>3.0.3-SNAPSHOT</maven-version>
-
+        <scmConnection>scm:svn:http://svn.apache.org/repos/asf/maven/maven-3/trunk</scmConnection>
         <perf.config>build=${maven-version}-r${buildNumber}</perf.config>
         <perf.assertAgainst></perf.assertAgainst>
       </properties>
@@ -187,7 +185,34 @@ under the License.
         </plugins>
       </build>
 
+    </profile>
 
+    <profile>
+      <id>maven-3.0-git</id>
+
+      <properties>
+        <scmConnection>scm:git:git://github.com/apache/maven-3.git</scmConnection>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>1.0-beta-5-SNAPSHOT</version>
+          </plugin>
+        </plugins>
+      </build>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>codehaus-snapshots</id>
+          <url>https://nexus.codehaus.org/content/repositories/snapshots/</url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
 
     <profile>
@@ -319,9 +344,8 @@ under the License.
 
   <!-- this is to make buildnumber plugin happy -->
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/maven-3/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/maven-3/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/maven-3/trunk</url>
+    <connection>${scmConnection}</connection>
+    <developerConnection>${scmConnection}</developerConnection>
   </scm>
 
 </project>
