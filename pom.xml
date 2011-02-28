@@ -145,7 +145,7 @@ under the License.
       <id>maven-3.0</id>
 
       <properties>
-        <maven-version>3.0.3-SNAPSHOT</maven-version>
+        <maven-version>3.0.4-SNAPSHOT</maven-version>
         <scmConnection>scm:svn:http://svn.apache.org/repos/asf/maven/maven-3/trunk</scmConnection>
         <perf.config>build=${maven-version}-r${buildNumber}</perf.config>
         <perf.assertAgainst></perf.assertAgainst>
