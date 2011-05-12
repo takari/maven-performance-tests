@@ -81,7 +81,7 @@ under the License.
     <dependency>
       <groupId>org.eclipse</groupId>
       <artifactId>org.eclipse.test.performance</artifactId>
-      <version>3.5.0-SNAPSHOT</version>
+      <version>3.5.0-SONATYPE-20110512</version>
     </dependency>
 
     <dependency>
