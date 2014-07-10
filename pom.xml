@@ -148,16 +148,17 @@ under the License.
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.17</version>
         <configuration>
-          <systemProperties>
-            <property>
-              <name>eclipse.perf.dbloc</name>
-              <value>${perf.dbloc}</value>
-            </property>
-            <property>
-              <name>test.maven.home</name>
-              <value>target/dependency/apache-maven-${maven-version}</value>
-            </property>
-          </systemProperties>
+          <systemPropertyVariables>
+            <eclipse.perf.dbloc>${perf.dbloc}</eclipse.perf.dbloc>
+            <test.maven.home>target/dependency/apache-maven-${maven-version}</test.maven.home>
+            <!-- 
+              | hudson uses -Dmaven.ext.class.path to enable its maven intergation
+              | but surefire blindly copies all -Dproperties to the forked jvm
+              | which enables hudson integration for the test builds. NOT desired
+              | as a workaround, set the system property to a dummy value 
+              -->
+            <maven.ext.class.path>-</maven.ext.class.path>
+          </systemPropertyVariables>
           <argLine>${surefire.memory}</argLine>
         </configuration>
       </plugin>
