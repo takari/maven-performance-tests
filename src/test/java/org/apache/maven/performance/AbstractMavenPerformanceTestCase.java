@@ -173,6 +173,13 @@ public abstract class AbstractMavenPerformanceTestCase
         {
             // TODO I do not enjoy this, I honestly don't.
             System.setProperty( "eclipse.perf.config", "build=" + getMavenVersion() );
+
+            /*
+             * hudson uses -Dmaven.ext.class.path to enable its maven intergation but surefire blindly copies all
+             * -Dproperties to the forked jvm which enables hudson integration for the test builds. as a workaround, set
+             * the system property to a dummy value
+             */
+            System.getProperties().remove( "maven.ext.class.path" );
         }
         catch ( IOException e )
         {
