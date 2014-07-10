@@ -9,3 +9,4 @@ target/
 bin/
 .DS_Store
 localRepo/
+/derby.log

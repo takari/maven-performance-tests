@@ -21,9 +21,15 @@ package org.apache.maven.performance;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 
+import org.apache.maven.cli.MavenCli;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
 import org.eclipse.test.internal.performance.InternalDimensions;
 import org.eclipse.test.internal.performance.InternalPerformanceMeter;
 import org.eclipse.test.internal.performance.PerformanceTestPlugin;
@@ -117,5 +123,60 @@ public abstract class AbstractMavenPerformanceTestCase
         throws IOException
     {
         return new File( "localRepo" ).getCanonicalFile();
+    }
+
+    static String getMavenVersion()
+        throws IOException
+    {
+        Properties properties = getBuildProperties();
+        String version = properties.getProperty( "version" );
+        if ( version.endsWith( "-SNAPSHOT" ) )
+        {
+            long timestamp = Long.valueOf( properties.getProperty( "timestamp" ) );
+            SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+            String qualifier = format.format( new Date( timestamp ) );
+            version = version.replace( "-SNAPSHOT", qualifier );
+        }
+        return version;
+    }
+
+    static Properties getBuildProperties()
+        throws IOException
+    {
+        Properties properties = new Properties();
+        InputStream resourceAsStream = null;
+        try
+        {
+            String path = "/org/apache/maven/messages/build.properties";
+            resourceAsStream = MavenCli.class.getResourceAsStream( path );
+
+            if ( resourceAsStream != null )
+            {
+                properties.load( resourceAsStream );
+            }
+            else
+            {
+                throw new IOException( "Classpath resource not found " + path );
+            }
+        }
+        finally
+        {
+            IOUtil.close( resourceAsStream );
+        }
+
+        return properties;
+    }
+
+    static
+    {
+        try
+        {
+            // TODO I do not enjoy this, I honestly don't.
+            System.setProperty( "eclipse.perf.config", "build=" + getMavenVersion() );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
     }
 }

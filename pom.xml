@@ -27,7 +27,7 @@ under the License.
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
-    <perf.dbloc>//localhost:1527;dbname=perfDB</perf.dbloc>
+    <perf.dbloc>/var/derby</perf.dbloc>
     <surefire.memory>-Xmx128m -XX:MaxPermSize=128m</surefire.memory>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven-version>3.0.5</maven-version>
@@ -98,63 +98,6 @@ under the License.
     </dependencies>
   </dependencyManagement>
 
-  <profiles>
-    <profile>
-      <id>maven-3.0</id>
-
-      <properties>
-        <maven-version>3.0.4-SNAPSHOT</maven-version>
-        <scmConnection>scm:svn:http://svn.apache.org/repos/asf/maven/maven-3/trunk</scmConnection>
-        <perf.config>build=${maven-version}-r${buildNumber}</perf.config>
-        <perf.assertAgainst></perf.assertAgainst>
-      </properties>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>buildnumber-maven-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <phase>validate</phase>
-                <goals>
-                  <goal>create</goal>
-                </goals>
-                <configuration>
-                  <scmDirectory>${maven.basedir}</scmDirectory>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-                <artifactId>maven-scm-provider-svnjava</artifactId>
-                <version>1.4</version>
-                <exclusions>
-                  <exclusion>
-                    <groupId>net.java.dev.jna</groupId>
-                    <artifactId>jna</artifactId>
-                  </exclusion>
-                </exclusions>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-
-    </profile>
-
-    <profile>
-      <id>maven-3.0-git</id>
-
-      <properties>
-        <scmConnection>scm:git:git://github.com/apache/maven-3.git</scmConnection>
-        <perf.config>build=${maven-version}-r${buildNumber}-${timestamp}</perf.config>
-      </properties>
-    </profile>
-  </profiles>
-
   <build>
     <plugins>
       <plugin>
@@ -211,19 +154,11 @@ under the License.
               <value>${perf.dbloc}</value>
             </property>
             <property>
-              <name>eclipse.perf.config</name>
-              <value>${perf.config}</value>
-            </property>
-            <property>
-              <name>eclipse.perf.assertAgainst</name>
-              <value>${perf.assertAgainst}</value>
-            </property>
-            <property>
               <name>test.maven.home</name>
               <value>target/dependency/apache-maven-${maven-version}</value>
             </property>
           </systemProperties>
-          <argLine>${surefire.memory} "-Djava.library.path=${basedir}/src/test/lib${path.separator}${java.library.path}"</argLine>
+          <argLine>${surefire.memory}</argLine>
         </configuration>
       </plugin>
 
@@ -245,10 +180,33 @@ under the License.
     </plugins>
   </build>
 
-  <!-- this is to make buildnumber plugin happy -->
-  <scm>
-    <connection>${scmConnection}</connection>
-    <developerConnection>${scmConnection}</developerConnection>
-  </scm>
 
+  <profiles>
+    <profile>
+      <id>assert-performance</id>
+      <activation>
+        <property>
+          <name>perf.assertAgainst</name>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <systemProperties combine.children="append">
+                  <property>
+                    <name>eclipse.perf.assertAgainst</name>
+                    <value>${perf.assertAgainst}</value>
+                  </property>
+                </systemProperties>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
