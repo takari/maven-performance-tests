@@ -30,7 +30,7 @@ under the License.
     <perf.dbloc>/var/derby</perf.dbloc>
     <surefire.memory>-Xmx128m -XX:MaxPermSize=128m</surefire.memory>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven-version>3.0.5</maven-version>
+    <maven-version>3.2.2</maven-version>
     <wagon-version>2.6</wagon-version>
   </properties>
 
@@ -44,7 +44,7 @@ under the License.
       <artifactId>maven-compat</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.sonatype.aether</groupId>
+      <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
     </dependency>
     <dependency>
