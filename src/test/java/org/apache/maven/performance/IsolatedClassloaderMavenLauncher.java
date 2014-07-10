@@ -57,27 +57,6 @@ public class IsolatedClassloaderMavenLauncher
             delayField.set( null, remoteAccessDelay );
         }
 
-        Class<?> cliUtilsClass = null;
-        Method cliUtilsRemoveShutdownHookMethod = null;
-        try
-        {
-            cliUtilsClass = cl.loadClass( "org.codehaus.plexus.util.cli.CommandLineUtils" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            // must be maven 2.x
-            cliUtilsClass = cl.loadClass( "hidden.org.codehaus.plexus.util.cli.CommandLineUtils" );
-        }
-
-        try
-        {
-            cliUtilsRemoveShutdownHookMethod = cliUtilsClass.getMethod( "removeShutdownHook", boolean.class );
-        }
-        catch ( NoSuchMethodException e )
-        {
-            throw new IllegalArgumentException( "Unsupported plexus-utils version, must be 1.5.13 or newer", e );
-        }
-
         Class<?> cworldClass;
         try
         {
@@ -114,10 +93,6 @@ public class IsolatedClassloaderMavenLauncher
             if ( origMavenHome != null )
             {
                 System.setProperty( "maven.home", origMavenHome );
-            }
-            if ( cliUtilsRemoveShutdownHookMethod != null )
-            {
-                cliUtilsRemoveShutdownHookMethod.invoke( null, Boolean.TRUE );
             }
         }
     }

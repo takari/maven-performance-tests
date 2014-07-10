@@ -30,117 +30,75 @@ under the License.
     <perf.dbloc>//localhost:1527;dbname=perfDB</perf.dbloc>
     <surefire.memory>-Xmx128m -XX:MaxPermSize=128m</surefire.memory>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-version>3.0.5</maven-version>
+    <wagon-version>2.6</wagon-version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-embedder</artifactId>
-      <version>${maven-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-file</artifactId>
-      <version>1.0-beta-7</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.wagon</groupId>
-      <artifactId>wagon-http-lightweight</artifactId>
-      <version>1.0-beta-7</version>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
     </dependency>
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
-      <version>1.9</version>
-      <exclusions>
-        <!-- excluded in favor of sisu -->
-        <exclusion>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-container-default</artifactId>
-        </exclusion>
-        <!-- excluded in favor of versions used by maven-embedder -->
-        <exclusion>
-          <groupId>org.sonatype.aether</groupId>
-          <artifactId>aether-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.sonatype.aether</groupId>
-          <artifactId>aether-spi</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.sonatype.aether</groupId>
-          <artifactId>aether-util</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.5.15</version>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-file</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.eclipse</groupId>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-http-lightweight</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.takari.performance</groupId>
       <artifactId>org.eclipse.test.performance</artifactId>
-      <version>3.5.0-SONATYPE-20110512</version>
+      <version>3.10.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.4.2.0</version>
+      <artifactId>derby</artifactId>
+      <version>10.10.2.0</version>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.11</version>
     </dependency>
   </dependencies>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven</artifactId>
+        <version>${maven-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-file</artifactId>
+        <version>${wagon-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-http-lightweight</artifactId>
+        <version>${wagon-version}</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
   <profiles>
-    <profile>
-      <id>maven-2.0.10</id>
-
-      <properties>
-        <maven-version>2.0.10</maven-version>
-        <perf.config>build=${maven-version}</perf.config>
-        <perf.assertAgainst></perf.assertAgainst>
-      </properties>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>fix-plexus-utils</id>
-                <phase>process-sources</phase>
-                <goals>
-                  <goal>copy</goal>
-                </goals>
-                <configuration>
-                  <!--
-                    not exactly nice, but this should put desired p-u
-                    infront on classpath
-                  -->
-                  <outputDirectory>target/dependency/apache-maven-2.0.10/boot</outputDirectory>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.codehaus.plexus</groupId>
-                      <artifactId>plexus-utils</artifactId>
-                      <version>1.5.15</version>
-                    </artifactItem>
-                  </artifactItems>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-
     <profile>
       <id>maven-3.0</id>
 
@@ -195,43 +153,6 @@ under the License.
         <perf.config>build=${maven-version}-r${buildNumber}-${timestamp}</perf.config>
       </properties>
     </profile>
-
-    <profile>
-      <id>m2e</id>
-      <activation>
-        <property>
-          <name>m2e.version</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.maven.ide.eclipse</groupId>
-            <artifactId>lifecycle-mapping</artifactId>
-            <version>0.10.0</version>
-            <configuration>
-              <mappingId>customizable</mappingId>
-              <configurators>
-                <configurator id='org.maven.ide.eclipse.jdt.javaConfigurator' />
-              </configurators>
-              <mojoExecutions>
-                <mojoExecution>org.apache.maven.plugins:maven-resources-plugin::</mojoExecution>
-              </mojoExecutions>
-            </configuration>
-          </plugin>
-        </plugins>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <version>2.4.3</version>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-
   </profiles>
 
   <build>
@@ -239,13 +160,13 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>2.5</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.1</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
@@ -255,6 +176,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
         <executions>
           <execution>
             <id>unpack-maven-distribution</id>
@@ -281,7 +203,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>2.17</version>
         <configuration>
           <systemProperties>
             <property>
@@ -308,14 +230,14 @@ under the License.
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.1.1</version>
+        <version>1.3.1</version>
         <configuration>
           <executable>java</executable>
           <classpathScope>test</classpathScope>
           <arguments>
             <argument>-Declipse.perf.dbloc=${perf.dbloc}</argument>
             <argument>-classpath</argument>
-            <classpath/>
+            <classpath />
             <argument>sample.performance.View</argument>
           </arguments>
         </configuration>

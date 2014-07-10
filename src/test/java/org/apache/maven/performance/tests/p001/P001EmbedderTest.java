@@ -61,7 +61,11 @@ import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
 import org.apache.maven.settings.building.SettingsBuilder;
 import org.apache.maven.settings.building.SettingsBuildingRequest;
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.eclipse.test.internal.performance.InternalDimensions;
 import org.eclipse.test.internal.performance.eval.RelativeBandChecker;
@@ -105,7 +109,12 @@ public class P001EmbedderTest
     {
         super.setUp();
 
-        container = new DefaultPlexusContainer();
+        final ContainerConfiguration mavenCoreCC = new DefaultContainerConfiguration();
+        mavenCoreCC.setClassWorld( new ClassWorld( "plexus.core", ClassWorld.class.getClassLoader() ) );
+        mavenCoreCC.setClassPathScanning( PlexusConstants.SCANNING_INDEX ).setAutoWiring( true );
+        mavenCoreCC.setName( "mavenCore" );
+
+        container = new DefaultPlexusContainer( mavenCoreCC );
         container.setLoggerManager( new NullLoggerManager() );
 
         this.populator = container.lookup( MavenExecutionRequestPopulator.class );
