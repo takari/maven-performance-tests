@@ -34,6 +34,13 @@ under the License.
     <wagon-version>2.6</wagon-version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>takari.snapshots</id>
+      <url>http://repository.takari.io:8081/nexus/content/repositories/snapshots</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
