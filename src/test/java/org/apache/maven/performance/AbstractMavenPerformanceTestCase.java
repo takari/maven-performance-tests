@@ -133,9 +133,9 @@ public abstract class AbstractMavenPerformanceTestCase
         if ( version.endsWith( "-SNAPSHOT" ) )
         {
             long timestamp = Long.valueOf( properties.getProperty( "timestamp" ) );
-            SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+            SimpleDateFormat format = new SimpleDateFormat( "yyyyMMdd_HHmmss" );
             String qualifier = format.format( new Date( timestamp ) );
-            version = version.replace( "-SNAPSHOT", qualifier );
+            version = version.replace( "-SNAPSHOT", "." + qualifier );
         }
         return version;
     }
