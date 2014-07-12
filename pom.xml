@@ -32,6 +32,8 @@ under the License.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven-version>3.2.2</maven-version>
     <wagon-version>2.6</wagon-version>
+
+    <test.maven.home>target/dependency/apache-maven-${maven-version}</test.maven.home>
   </properties>
 
   <repositories>
@@ -157,7 +159,7 @@ under the License.
         <configuration>
           <systemPropertyVariables>
             <eclipse.perf.dbloc>${perf.dbloc}</eclipse.perf.dbloc>
-            <test.maven.home>target/dependency/apache-maven-${maven-version}</test.maven.home>
+            <test.maven.home>${test.maven.home}</test.maven.home>
           </systemPropertyVariables>
           <argLine>${surefire.memory}</argLine>
         </configuration>
